@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🌤 Weather App</h1>
+        <p>Check weather anywhere in the world</p>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="city"
+                placeholder="Enter city name">
+
+            <button onclick="getWeather()">
+                Search
+            </button>
+        </div>
+
+        <div id="result"></div>
+
+    </div>
+
+    <script>
+        async function getWeather(){
+
+            const city = document.getElementById("city").value;
+
+            if(city === ""){
+                alert("Please enter a city");
+                return;
+            }
+
+            const response = await fetch(`/weather?city=${city}`);
+            const data = await response.json();
+
+            if(data.error){
+                document.getElementById("result").innerHTML =
+                    `<p class="error">${data.error}</p>`;
+                return;
+            }
+
+            document.getElementById("result").innerHTML = `
+                <div class="weather-card">
+                    <h2>${data.city}, ${data.country}</h2>
+
+                    <img
+                    src="https://openweathermap.org/img/wn/${data.icon}@2x.png">
+
+                    <h1>${data.temperature}°C</h1>
+
+                    <p>${data.weather}</p>
+
+                    <div class="details">
+                        <div>💧 ${data.humidity}%</div>
+                        <div>💨 ${data.wind_speed} m/s</div>
+                        <div>🌡 ${data.feels_like}°C</div>
+                        <div>📊 ${data.pressure} hPa</div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>
